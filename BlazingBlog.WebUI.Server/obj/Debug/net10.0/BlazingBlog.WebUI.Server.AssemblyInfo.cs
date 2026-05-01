@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BlazingBlog.WebUI.Server")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+99288c92387adbfab064764fa4afe9e04b576c01")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+79ef73abb7f8fc9b647d6890dc68edb03d027024")]
 [assembly: System.Reflection.AssemblyProductAttribute("BlazingBlog.WebUI.Server")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BlazingBlog.WebUI.Server")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
