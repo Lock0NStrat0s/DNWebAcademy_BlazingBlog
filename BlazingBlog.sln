@@ -1,0 +1,21 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4A2954EF-4B0B-4A4E-9749-4C2984FB9837}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazingBlog.WebUI.Server", "BlazingBlog.WebUI.Server\BlazingBlog.WebUI.Server.csproj", "{6AD3D083-95DC-46E2-9E61-E47DB7A04690}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6AD3D083-95DC-46E2-9E61-E47DB7A04690} = {4A2954EF-4B0B-4A4E-9749-4C2984FB9837}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6AD3D083-95DC-46E2-9E61-E47DB7A04690}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AD3D083-95DC-46E2-9E61-E47DB7A04690}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AD3D083-95DC-46E2-9E61-E47DB7A04690}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AD3D083-95DC-46E2-9E61-E47DB7A04690}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
