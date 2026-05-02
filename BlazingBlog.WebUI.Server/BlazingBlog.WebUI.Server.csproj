@@ -8,11 +8,22 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\BlazingBlog.Application\BlazingBlog.Application.csproj" />
+      <Folder Include="obj\Debug\net10.0\" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="obj\Debug\net10.0\" />
+      <ProjectReference Include="..\BlazingBlog.Infrastructure\BlazingBlog.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.7">
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        <PrivateAssets>all</PrivateAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.7">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
     </ItemGroup>
 
 </Project>
