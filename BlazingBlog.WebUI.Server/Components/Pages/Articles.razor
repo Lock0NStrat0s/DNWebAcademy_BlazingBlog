@@ -1,5 +1,6 @@
 @page "/articles"
-@inject IArticleService ArticleService
+@using BlazingBlog.Application.Articles.GetArticles
+@inject ISender Sender
 @attribute [StreamRendering]
 
 <PageTitle>Articles</PageTitle>
@@ -20,12 +21,11 @@ else
 }
 
 @code {
-    private List<Article> articles = new List<Article>();
+    private List<ArticleResponse> articles = new();
 
     protected override async Task OnInitializedAsync()
     {
-        await Task.Delay(1000);
-        var result = await ArticleService.GetAllArticlesAsync();
+        var result = await Sender.Send(new GetArticlesQuery());
 
         if (result is not null)
         {

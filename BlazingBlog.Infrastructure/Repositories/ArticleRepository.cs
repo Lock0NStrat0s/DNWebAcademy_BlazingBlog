@@ -16,4 +16,11 @@ public class ArticleRepository : IArticleRepository
     {
         return await _context.Articles.ToListAsync();
     }
+
+    public async Task<Article> CreateArticleAsync(Article article)
+    {
+        _context.Add(article);
+        await _context.SaveChangesAsync();
+        return article;
+    }
 }
