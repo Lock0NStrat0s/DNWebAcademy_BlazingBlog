@@ -7,6 +7,6 @@ public class CreateArticleCommand : IRequest<ArticleResponse>
 {
     public required string Title { get; set; }
     public string? Content { get; set; }
-    public DateTime DatePublished { get; set; } =  DateTime.Now;
+    public DateTime DatePublished { get; set; } =  DateTime.UtcNow;
     public bool IsPublished { get; set; } = false;
 }
