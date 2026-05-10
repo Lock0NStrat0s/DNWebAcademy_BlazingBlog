@@ -17,11 +17,11 @@
 
 @code {
     [SupplyParameterFromForm]
-    ArticleModel? Article { get; set; } = new();
+    ArticleModel Article { get; set; } = new();
 
     async Task HandleSubmit()
     {
-        if (Article is null) return;
+        //if (Article is null) return;
         
         Console.WriteLine($"Title: {Article.Title}, Content: {Article.Content}, IsPublished: {Article.IsPublished}");
         Article.DatePublished = DateTime.SpecifyKind(Article.DatePublished, DateTimeKind.Utc);
