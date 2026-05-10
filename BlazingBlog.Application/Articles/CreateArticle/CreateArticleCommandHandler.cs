@@ -1,10 +1,6 @@
-using BlazingBlog.Domain.Articles;
-using Mapster;
-using MediatR;
-
 namespace BlazingBlog.Application.Articles.CreateArticle;
 
-public class CreateArticleCommandHandler : IRequestHandler<CreateArticleCommand, ArticleResponse>
+public class CreateArticleCommandHandler : ICommandHandler<CreateArticleCommand, ArticleResponse>
 {
     private readonly IArticleRepository _articleRepository;
     
@@ -13,7 +9,7 @@ public class CreateArticleCommandHandler : IRequestHandler<CreateArticleCommand,
         _articleRepository = articleRepository;
     }
     
-    public async Task<ArticleResponse> Handle(CreateArticleCommand request, CancellationToken cancellationToken)
+    public async Task<Result<ArticleResponse>> Handle(CreateArticleCommand request, CancellationToken cancellationToken)
     {
         var newArticle = request.Adapt<Article>();
         

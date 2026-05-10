@@ -4,7 +4,7 @@ using MediatR;
 
 namespace BlazingBlog.Application.Articles.GetArticleById;
 
-public class GetArticleByIdQueryHandler : IRequestHandler<GetArticleByIdQuery, ArticleResponse?>
+public class GetArticleByIdQueryHandler : IQueryHandler<GetArticleByIdQuery, ArticleResponse?>
 {
     private readonly IArticleRepository _articleRepository;
     
@@ -13,12 +13,12 @@ public class GetArticleByIdQueryHandler : IRequestHandler<GetArticleByIdQuery, A
         _articleRepository = articleRepository;
     }
     
-    public async Task<ArticleResponse?> Handle(GetArticleByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<ArticleResponse?>> Handle(GetArticleByIdQuery request, CancellationToken cancellationToken)
     {
         var result = await _articleRepository.GetArticleByIdAsync(request.Id);
 
         if (result is null)
-            return null;
+            return Result.Fail<ArticleResponse?>("NThe article does not exist.");
         
         return result.Adapt<ArticleResponse>();
     }
