@@ -1,6 +1,7 @@
 @page "/article-editor"
 @page "/article-editor/{ArticleId:int}"
 @inject ISender Sender
+@inject NavigationManager NavigationManager
 
 @if (isEditMode && Article is not null)
 {
@@ -15,16 +16,27 @@ else
 
 @if (Article is not null)
 {
-<EditForm Model="Article" OnSubmit="HandleSubmit" FormName="ArticleEditorForm">
-    <InputText class="form-control" @bind-Value="Article.Title" />
-    <InputTextArea class="form-control" @bind-Value="Article.Content" />
-    <InputDate class="form-control" @bind-Value="Article.DatePublished" />
-    <div class="form-check">
-        <InputCheckbox class="form-check-input" @bind-Value="Article.IsPublished" />
-        <label class="form-check-label">Is Published</label>
-    </div>
-    <button class="btn-primary" type="submit">Submit</button>
-</EditForm>
+    <EditForm Model="Article" OnSubmit="HandleSubmit" FormName="ArticleEditorForm">
+        <InputText class="form-control" @bind-Value="Article.Title" />
+        <InputTextArea class="form-control" @bind-Value="Article.Content" />
+        <InputDate class="form-control" @bind-Value="Article.DatePublished" />
+        <div class="form-check">
+            <InputCheckbox class="form-check-input" @bind-Value="Article.IsPublished" />
+            <label class="form-check-label">Is Published</label>
+        </div>
+        <button class="btn-primary" type="submit">Submit</button>
+    </EditForm>
+
+    if (isEditMode)
+    {
+    <p>
+    <form @onsubmit="DeleteArticle" @formname="DeleteArticleForm" method="post">
+        <button class="btn btn-danger">Delete Article</button>
+        <AntiforgeryToken />
+    </form>
+    </p>
+    }
+
 }
 
 @code {
@@ -43,7 +55,7 @@ else
 
             if (result is not null)
             {
-                Article ??= result.Adapt<ArticleModel>();
+                Article = result.Adapt<ArticleModel>();
                 Article.Id = (int)ArticleId;
             }
         }
@@ -55,9 +67,10 @@ else
 
     async Task HandleSubmit()
     {
+        Article.DatePublished = DateTime.SpecifyKind(Article.DatePublished, DateTimeKind.Utc);
+
         if (isEditMode)
         {
-            Article.DatePublished = DateTime.SpecifyKind(Article.DatePublished, DateTimeKind.Utc);
             var command = Article.Adapt<UpdateArticleCommand>();
             var result = await Sender.Send(command);
             if (result is not null)
@@ -67,11 +80,27 @@ else
         }
         else
         {
-            Console.WriteLine($"Title: {Article.Title}, Content: {Article.Content}, IsPublished: {Article.IsPublished}");
-            Article.DatePublished = DateTime.SpecifyKind(Article.DatePublished, DateTimeKind.Utc);
             var command = Article.Adapt<CreateArticleCommand>();
             var result = await Sender.Send(command);
-            Article = result.Adapt<ArticleModel>();
+            
+            NavigationManager.NavigateTo($"/article-editor/{result.Id}");
+                //Article = result.Adapt<ArticleModel>();
+        }
+    }
+
+    async Task DeleteArticle()
+    {
+        if (Article is null)
+        {
+            return;
+        }
+        
+        var command = new DeleteArticleCommand { Id = (int)Article.Id };
+        var isSuccess = await Sender.Send(command);
+
+        if (isSuccess)
+        {
+            NavigationManager.NavigateTo("/articles");
         }
     }
 

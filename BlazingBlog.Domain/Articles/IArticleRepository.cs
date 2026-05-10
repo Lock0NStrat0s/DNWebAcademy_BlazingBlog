@@ -6,4 +6,5 @@ public interface IArticleRepository
     Task<Article?> CreateArticleAsync(Article article);
     Task<Article> GetArticleByIdAsync(int id);
     Task<Article?> UpdateArticleAsync(Article article);
+    Task<bool> DeleteArticleAsync(int id);
 }

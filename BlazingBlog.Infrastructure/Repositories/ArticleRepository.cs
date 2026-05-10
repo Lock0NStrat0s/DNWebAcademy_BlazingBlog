@@ -47,4 +47,18 @@ public class ArticleRepository : IArticleRepository
         
         return articleToUpdate;
     }
+
+    public async Task<bool> DeleteArticleAsync(int id)
+    {
+        var articleToDelete = await GetArticleByIdAsync(id);
+        if (articleToDelete is null)
+        {
+            return false;
+        }
+
+        _context.Articles.Remove(articleToDelete);
+        await _context.SaveChangesAsync();
+        
+        return true;
+    }
 }
