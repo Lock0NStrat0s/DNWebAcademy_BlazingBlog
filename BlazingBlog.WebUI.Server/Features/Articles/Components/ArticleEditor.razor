@@ -1,9 +1,20 @@
 @page "/article-editor"
+@page "/article-editor/{ArticleId:int}"
 @inject ISender Sender
 
-<PageTitle>Create New Article</PageTitle>
-<h3>Create New Article</h3>
+@if (isEditMode && Article is not null)
+{
+<PageTitle>Edit Article</PageTitle>
+<h3>Edit Article</h3>
+}
+else
+{
+    <PageTitle>Create New Article</PageTitle>
+    <h3>Create New Article</h3>
+}
 
+@if (Article is not null)
+{
 <EditForm Model="Article" OnSubmit="HandleSubmit" FormName="ArticleEditorForm">
     <InputText class="form-control" @bind-Value="Article.Title" />
     <InputTextArea class="form-control" @bind-Value="Article.Content" />
@@ -13,21 +24,55 @@
         <label class="form-check-label">Is Published</label>
     </div>
     <button class="btn-primary" type="submit">Submit</button>
-    </EditForm>
+</EditForm>
+}
 
 @code {
+    private bool isEditMode => ArticleId != null;
+    [Parameter]
+    public int? ArticleId { get; set; }
     [SupplyParameterFromForm]
-    ArticleModel Article { get; set; } = new();
+    ArticleModel? Article { get; set; } = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (ArticleId is not null)
+        {
+            var result = await Sender.Send(
+                new GetArticleByIdQuery { Id = (int)ArticleId });
+
+            if (result is not null)
+            {
+                Article ??= result.Adapt<ArticleModel>();
+                Article.Id = (int)ArticleId;
+            }
+        }
+        else 
+        {
+            Article ??= new();
+        }
+    }
 
     async Task HandleSubmit()
     {
-        //if (Article is null) return;
-        
-        Console.WriteLine($"Title: {Article.Title}, Content: {Article.Content}, IsPublished: {Article.IsPublished}");
-        Article.DatePublished = DateTime.SpecifyKind(Article.DatePublished, DateTimeKind.Utc);
-        var command = Article.Adapt<CreateArticleCommand>();
-        var result = await Sender.Send(command);
-        Article = result.Adapt<ArticleModel>();
+        if (isEditMode)
+        {
+            Article.DatePublished = DateTime.SpecifyKind(Article.DatePublished, DateTimeKind.Utc);
+            var command = Article.Adapt<UpdateArticleCommand>();
+            var result = await Sender.Send(command);
+            if (result is not null)
+            {
+                Article = result.Adapt<ArticleModel>();
+            }
+        }
+        else
+        {
+            Console.WriteLine($"Title: {Article.Title}, Content: {Article.Content}, IsPublished: {Article.IsPublished}");
+            Article.DatePublished = DateTime.SpecifyKind(Article.DatePublished, DateTimeKind.Utc);
+            var command = Article.Adapt<CreateArticleCommand>();
+            var result = await Sender.Send(command);
+            Article = result.Adapt<ArticleModel>();
+        }
     }
 
 }
