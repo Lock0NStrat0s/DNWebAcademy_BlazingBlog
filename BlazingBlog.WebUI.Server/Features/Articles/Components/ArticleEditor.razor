@@ -5,8 +5,8 @@
 
 @if (isEditMode && Article is not null)
 {
-<PageTitle>Edit Article</PageTitle>
-<h3>Edit Article</h3>
+    <PageTitle>Edit Article</PageTitle>
+    <h3>Edit Article</h3>
 }
 else
 {
@@ -17,11 +17,11 @@ else
 @if (Article is not null)
 {
     <EditForm Model="Article" OnSubmit="HandleSubmit" FormName="ArticleEditorForm">
-        <InputText class="form-control" @bind-Value="Article.Title" />
-        <InputTextArea class="form-control" @bind-Value="Article.Content" />
-        <InputDate class="form-control" @bind-Value="Article.DatePublished" />
+        <InputText class="form-control" @bind-Value="Article.Title"/>
+        <InputTextArea class="form-control" @bind-Value="Article.Content"/>
+        <InputDate class="form-control" @bind-Value="Article.DatePublished"/>
         <div class="form-check">
-            <InputCheckbox class="form-check-input" @bind-Value="Article.IsPublished" />
+            <InputCheckbox class="form-check-input" @bind-Value="Article.IsPublished"/>
             <label class="form-check-label">Is Published</label>
         </div>
         <button class="btn-primary" type="submit">Submit</button>
@@ -29,22 +29,23 @@ else
 
     if (isEditMode)
     {
-    <p>
-    <form @onsubmit="DeleteArticle" @formname="DeleteArticleForm" method="post">
-        <button class="btn btn-danger">Delete Article</button>
-        <AntiforgeryToken />
-    </form>
-    </p>
+        <p>
+        <form @onsubmit="DeleteArticle" @formname="DeleteArticleForm" method="post">
+            <button class="btn btn-danger">Delete Article</button>
+            <AntiforgeryToken/>
+        </form>
+        </p>
     }
-
 }
+
+<span class="text-danger">@errorMessage</span>
 
 @code {
     private bool isEditMode => ArticleId != null;
-    [Parameter]
-    public int? ArticleId { get; set; }
-    [SupplyParameterFromForm]
-    ArticleModel? Article { get; set; } = new();
+    private string errorMessage = string.Empty;
+
+    [Parameter] public int? ArticleId { get; set; }
+    [SupplyParameterFromForm] ArticleModel? Article { get; set; } = new();
 
     protected override async Task OnParametersSetAsync()
     {
@@ -53,15 +54,19 @@ else
             var result = await Sender.Send(
                 new GetArticleByIdQuery { Id = (int)ArticleId });
 
-            if (result is not null)
+            if (result.Success)
             {
-                Article = result.Adapt<ArticleModel>();
+                Article ??= result.Value.Adapt<ArticleModel>();
                 Article.Id = (int)ArticleId;
             }
+            else
+            {
+                SetErrorMessage(result.Error);
+            }
         }
-        else 
+        else
         {
-            Article ??= new();
+            Article ??= new ArticleModel();
         }
     }
 
@@ -73,18 +78,28 @@ else
         {
             var command = Article.Adapt<UpdateArticleCommand>();
             var result = await Sender.Send(command);
-            if (result is not null)
+            if (result.Success)
             {
-                Article = result.Adapt<ArticleModel>();
+                Article = result.Value.Adapt<ArticleModel>();
+            }
+            else
+            {
+                SetErrorMessage(result.Error);
             }
         }
         else
         {
             var command = Article.Adapt<CreateArticleCommand>();
             var result = await Sender.Send(command);
-            
-            NavigationManager.NavigateTo($"/article-editor/{result.Id}");
-                //Article = result.Adapt<ArticleModel>();
+
+            if (result.Success)
+            {
+                NavigationManager.NavigateTo($"/article-editor/{result.Value.Id}");
+            }
+            else
+            {
+                SetErrorMessage(result.Error);
+            }
         }
     }
 
@@ -94,14 +109,23 @@ else
         {
             return;
         }
-        
-        var command = new DeleteArticleCommand { Id = (int)Article.Id };
-        var isSuccess = await Sender.Send(command);
 
-        if (isSuccess)
+        var command = new DeleteArticleCommand { Id = Article.Id };
+        var result = await Sender.Send(command);
+
+        if (result.Success)
         {
             NavigationManager.NavigateTo("/articles");
         }
+        else
+        {
+            SetErrorMessage(result.Error);
+        }
+    }
+
+    void SetErrorMessage(string? error)
+    {
+        errorMessage = error ?? string.Empty;
     }
 
 }
